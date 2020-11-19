@@ -1,0 +1,343 @@
+1)
+
+package main
+
+import (
+	"container/list"
+	"fmt"
+)
+
+func main() {
+	
+	l := list.New()
+	e4 := l.PushBack(4)
+	e1 := l.PushFront(1)
+	l.InsertBefore(3, e4)
+	l.InsertAfter(2, e1)
+
+	
+	for e := l.Front(); e != nil; e = e.Next() {
+		fmt.Println(e.Value)
+	}
+
+}
+
+
+1
+2
+3
+4
+
+Program exited.
+
+
+2)
+
+
+
+package main
+
+import (
+    "fmt"
+    "container/list"
+)
+
+func main() {
+    fmt.Println("welcome kloud one")
+    mylist := list.New()
+    mylist.PushBack(1)
+    mylist.PushFront(2)
+    
+}
+
+welcome kloud one
+
+Program exited.
+
+
+3)
+
+package main
+ 
+import "fmt"
+ 
+type Node struct {
+    prev *Node
+    next *Node
+    key  interface{}
+}
+ 
+type List struct {
+    head *Node
+    tail *Node
+}
+ 
+func (L *List) Insert(key interface{}) {
+    list := &Node{
+        next: L.head,
+        key:  key,
+    }
+    if L.head != nil {
+        L.head.prev = list
+    }
+    L.head = list
+ 
+    l := L.head
+    for l.next != nil {
+        l = l.next
+    }
+    L.tail = l
+}
+ 
+func (l *List) Display() {
+    list := l.head
+    for list != nil {
+        fmt.Printf("%+v ->", list.key)
+        list = list.next
+    }
+    fmt.Println()
+}
+ 
+func Display(list *Node) {
+    for list != nil {
+        fmt.Printf("%v ->", list.key)
+        list = list.next
+    }
+    fmt.Println()
+}
+ 
+func ShowBackwards(list *Node) {
+    for list != nil {
+        fmt.Printf("%v <-", list.key)
+        list = list.prev
+    }
+    fmt.Println()
+}
+ 
+func (l *List) Reverse() {
+    curr := l.head
+    var prev *Node
+    l.tail = l.head
+ 
+    for curr != nil {
+        next := curr.next
+        curr.next = prev
+        prev = curr
+        curr = next
+    }
+    l.head = prev
+    Display(l.head)
+}
+ 
+func main() {
+    link := List{}
+    link.Insert(5)
+    link.Insert(9)
+    link.Insert(13)
+    link.Insert(22)
+    link.Insert(28)
+    link.Insert(36)
+     
+    fmt.Println("==============================")
+    fmt.Printf("Head: %v\n", link.head.key)
+    fmt.Printf("Tail: %v\n", link.tail.key)
+    link.Display()
+    fmt.Println("==============================")
+    fmt.Printf("head: %v\n", link.head.key)
+    fmt.Printf("tail: %v\n", link.tail.key)
+    link.Reverse()
+    fmt.Println("==============================")
+}
+
+
+==============================
+Head: 36
+Tail: 5
+36 ->28 ->22 ->13 ->9 ->5 ->
+==============================
+head: 36
+tail: 5
+5 ->9 ->13 ->22 ->28 ->36 ->
+==============================
+
+Program exited.
+
+
+4)
+
+package main
+
+import "fmt"
+
+type song struct {
+	name   string
+	artist string
+	next   *song
+}
+
+type playlist struct {
+	name       string
+	head       *song
+	nowPlaying *song
+}
+
+func createPlaylist(name string) *playlist {
+	return &playlist{
+		name: name,
+	}
+}
+
+func (p *playlist) addSong(name, artist string) error {
+	s := &song{
+		name:   name,
+		artist: artist,
+	}
+	if p.head == nil {
+		p.head = s
+	} else {
+		currentNode := p.head
+		for currentNode.next != nil {
+			currentNode = currentNode.next
+		}
+		currentNode.next = s
+	}
+	return nil
+}
+
+func (p *playlist) showAllSongs() error {
+	currentNode := p.head
+	if currentNode == nil {
+		fmt.Println("Playlist is empty.")
+		return nil
+	}
+	fmt.Printf("%+v\n", *currentNode)
+	for currentNode.next != nil {
+		currentNode = currentNode.next
+		fmt.Printf("%+v\n", *currentNode)
+	}
+
+	return nil
+}
+
+func (p *playlist) startPlaying() *song {
+	p.nowPlaying = p.head
+	return p.nowPlaying
+}
+
+func (p *playlist) nextSong() *song {
+	p.nowPlaying = p.nowPlaying.next
+	return p.nowPlaying
+}
+
+func main() {
+	playlistName := "myplaylist"
+	myPlaylist := createPlaylist(playlistName)
+	fmt.Println("Created playlist")
+	fmt.Println()
+
+	fmt.Print("Adding songs to the playlist...\n\n")
+	myPlaylist.addSong("johny johny", "DSP")
+	myPlaylist.addSong("twinkle", "thaman")
+	myPlaylist.addSong("butterfly", "anub")
+	myPlaylist.addSong("Feels", "chakri")
+	fmt.Println("Showing all songs in playlist...")
+	myPlaylist.showAllSongs()
+	fmt.Println()
+
+	myPlaylist.startPlaying()
+	fmt.Printf("Now playing: %s by %s\n", myPlaylist.nowPlaying.name, myPlaylist.nowPlaying.artist)
+	fmt.Println()
+
+	myPlaylist.nextSong()
+	fmt.Println("Changing next song...")
+	fmt.Printf("Now playing: %s by %s\n", myPlaylist.nowPlaying.name, myPlaylist.nowPlaying.artist)
+	fmt.Println()
+	myPlaylist.nextSong()
+	fmt.Println("Changing next song...")
+	fmt.Printf("Now playing: %s by %s\n", myPlaylist.nowPlaying.name, myPlaylist.nowPlaying.artist)
+
+}Created playlist
+
+Adding songs to the playlist...
+
+Showing all songs in playlist...
+{name:johny johny artist:DSP next:0xc000060180}
+{name:twinkle artist:thaman next:0xc0000601b0}
+{name:butterfly artist:anub next:0xc0000601e0}
+{name:Feels artist:chakri next:<nil>}
+
+Now playing: johny johny by DSP
+
+Changing next song...
+Now playing: twinkle by thaman
+
+Changing next song...
+Now playing: butterfly by anub
+
+Program exited.
+
+5)
+
+package main
+
+import (
+    "fmt"
+    "container/list"
+)
+
+func main() {
+    fmt.Println("kloud one is the best")
+	
+    mylist := list.New()
+    mylist.PushBack(1)
+    mylist.PushFront(2)
+
+    for element := mylist.Front(); element != nil; element = element.Next() {
+	
+	fmt.Println(element.Value)
+    }
+
+}
+
+kloud one is the best
+2
+1
+
+Program exited.
+
+6)
+
+package main
+
+import (
+	"fmt"
+	"container/list"
+)
+
+
+func main() {
+
+	mylist := list.New()
+	mylist.PushBack(1)
+	mylist.PushFront(2)
+	
+	for element := mylist.Front(); element != nil; element = element.Next() {
+		
+		if element.Value != 1 {
+			mylist.Remove(element)
+		}
+	}
+	
+	for element := mylist.Front(); element != nil; element = element.Next() {
+		
+		fmt.Println(element.Value)
+	}
+
+}
+
+1
+
+Program exited.
+
+
+

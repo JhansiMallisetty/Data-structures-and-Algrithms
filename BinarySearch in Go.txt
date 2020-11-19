@@ -1,0 +1,352 @@
+1)
+
+package main
+import "fmt"
+ 
+func binarySearch(needle int, haystack []int) bool {
+ 
+    low := 0
+    high := len(haystack) - 1
+ 
+    for low <= high{
+        median := (low + high) / 2
+ 
+        if haystack[median] < needle {
+            low = median + 1
+        }else{
+            high = median - 1
+        }
+    }
+ 
+    if low == len(haystack) || haystack[low] != needle {
+        return false
+    }
+ 
+    return true
+}
+func main(){
+    items := []int{1,2, 3, 4, 6, 7,8, 9}
+    fmt.Println(binarySearch(10, items))
+    fmt.Println(binarySearch(6, items))
+}
+
+false
+true
+
+Program exited.
+
+2)
+
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    a := []int{1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
+    x := 19
+
+    i := sort.Search(len(a), func(i int) bool { return a[i] >= x })
+    if i < len(a) && a[i] == x {
+        fmt.Printf("found %d at index %d in %v\n", x, i, a)
+    } else {
+        fmt.Printf("%d not found in %v\n", x, a)
+    }
+}
+
+found 19 at index 9 in [1 3 5 7 9 11 13 15 17 19]
+
+Program exited.
+
+
+3)
+
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+func main() {
+    a := []int{1, 3, 5, 7, 9, 11, 13, 15, 17, 19}
+    x := 6
+
+    i := sort.Search(len(a), func(i int) bool { return a[i] >= x })
+    if i < len(a) && a[i] == x {
+        fmt.Printf("found %d at index %d in %v\n", x, i, a)
+    } else {
+        fmt.Printf("%d not found in %v\n", x, a)
+    }
+}
+
+
+6 not found in [1 3 5 7 9 11 13 15 17 19]
+
+Program exited.
+
+4)
+
+package main
+
+import "fmt"
+
+func main() {
+    searchField := []int{2, 5, 6, 12, 16, 20, 15, 26, 6, 21}
+    searchNumber := 3
+
+    fmt.Println("Running Program")
+    fmt.Println("Searching list of numbers: ", searchField)
+    fmt.Println("Searching for number: ", searchNumber)
+
+    numFound := false
+    
+    result, _ := binarySearch2(searchField, len(searchField), searchNumber, numFound)
+    fmt.Println("Found! Your number is found in position: ", result)
+   
+}
+
+func binarySearch2(a []int, field int, search int, numFound bool) (result int, searchCount int) {
+    
+    searchCount, i := 0, 0
+    for !numFound {
+        searchCount++
+        mid := i + (field-i)/2
+        if search == a[mid] {
+            numFound = true
+            result = mid
+            return result, searchCount
+        } else if search > a[mid] {
+            field++
+            
+            return binarySearch2(a, field, search, numFound)
+        }
+        field = mid
+        return binarySearch2(a, field, search, numFound)
+    }
+    return result, searchCount
+}
+
+Running Program
+Searching list of numbers:  [2 5 6 12 16 20 15 26 6 21]
+Searching for number:  3
+false
+not found
+Program exited: status 2.
+
+5)
+
+
+package main
+
+import "fmt"
+
+func main() {
+	searchField := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	for _, searchNumber := range searchField {
+		fmt.Printf("Searching for %d in list %v\n", searchNumber, searchField)
+		result, searchCount := binarySearch(searchField, searchNumber)
+		fmt.Printf("Your number was found in position %d after %d steps.\n\n", result, searchCount)
+	}
+}
+
+func binarySearch(a []int, search int) (result int, searchCount int) {
+	mid := len(a) / 2
+	switch {
+	case len(a) == 0:
+		result = -1 
+	case a[mid] > search:
+		result, searchCount = binarySearch(a[:mid], search)
+	case a[mid] < search:
+		result, searchCount = binarySearch(a[mid+1:], search)
+		result += mid + 1
+	default: 
+		result = mid 
+	}
+	searchCount++
+	return
+}
+
+Searching for 1 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 0 after 4 steps.
+
+Searching for 2 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 1 after 3 steps.
+
+Searching for 3 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 2 after 2 steps.
+
+Searching for 4 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 3 after 4 steps.
+
+Searching for 5 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 4 after 3 steps.
+
+Searching for 6 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 5 after 1 steps.
+
+Searching for 7 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 6 after 4 steps.
+
+Searching for 8 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 7 after 3 steps.
+
+Searching for 9 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 8 after 2 steps.
+
+Searching for 10 in list [1 2 3 4 5 6 7 8 9 10]
+Your number was found in position 9 after 3 steps.
+
+
+Program exited.
+
+
+6)
+
+package main
+
+import (
+	"fmt"
+)
+
+func BinarySearch(target_map []int, value int) int {
+
+	start_index := 0
+	end_index := len(target_map) - 1
+
+	for start_index <= end_index {
+
+		median := (start_index + end_index) / 2
+
+		if target_map[median] < value {
+			start_index = median + 1
+		} else {
+			end_index = median - 1
+		}
+
+	}
+
+	if start_index == len(target_map) || target_map[start_index] != value {
+		return -1
+	} else {
+		return start_index
+	}
+
+}
+
+func main() {
+
+	values := []int{1, 2, 3, 4, 5, 6, 7}
+	fmt.Println(BinarySearch(values, 5))
+
+}
+
+
+4
+
+Program exited.
+
+7)
+
+package main
+
+import (
+	"fmt"
+)
+
+type Tree struct {
+	root *Node
+}
+
+type Node struct {
+	key   byte
+	left  *Node
+	right *Node
+}
+
+func (t *Tree) insert(data byte) {
+	if t.root == nil {
+		t.root = &Node{key: data}
+	} else {
+		t.root.insert(data)
+	}
+}
+
+func (n *Node) insert(data byte) {
+	if data <= n.key {
+		if n.left == nil {
+			n.left = &Node{key: data}
+		} else {
+			n.left.insert(data)
+		}
+	} else {
+		if n.right == nil {
+			n.right = &Node{key: data}
+		} else {
+			n.right.insert(data)
+		}
+	}
+}
+
+func printPreOrder(n *Node) {
+	if n == nil {
+		return
+	} else {
+		fmt.Printf("%c ", n.key)
+		printPreOrder(n.left)
+		printPreOrder(n.right)
+	}
+}
+
+func printPostOrder(n *Node) {
+	if n == nil {
+		return
+	} else {
+		printPostOrder(n.left)
+		printPostOrder(n.right)
+		fmt.Printf("%c ", n.key)
+	}
+}
+
+func printInOrder(n *Node) {
+	if n == nil {
+		return
+	} else {
+		printInOrder(n.left)
+		fmt.Printf("%c ", n.key)
+		printInOrder(n.right)
+	}
+}
+
+func main() {
+	var t Tree
+
+	t.insert('F')
+	t.insert('B')
+	t.insert('A')
+	t.insert('D')
+	t.insert('C')
+	t.insert('E')
+	t.insert('G')
+	t.insert('I')
+	t.insert('H')
+
+	fmt.Printf("Pre Order: ")
+	printPreOrder(t.root)
+	fmt.Println()
+	fmt.Printf("Post Order: ")
+	printPostOrder(t.root)
+	fmt.Println()
+	fmt.Printf("In Order: ")
+	printInOrder(t.root)
+	fmt.Println()
+}
+
+Pre Order: F B A D C E G I H 
+Post Order: A C E D B H I G F 
+In Order: A B C D E F G H I 
+
+Program exited.

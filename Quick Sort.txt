@@ -1,0 +1,323 @@
+1)
+
+package main
+ 
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+ 
+func main() {
+ 
+    slice := generateSlice(20)
+    fmt.Println("\n--- Unsorted --- \n\n", slice)
+    quicksort(slice)
+    fmt.Println("\n--- Sorted ---\n\n", slice)
+}
+ 
+
+func generateSlice(size int) []int {
+ 
+    slice := make([]int, size, size)
+    rand.Seed(time.Now().UnixNano())
+    for i := 0; i < size; i++ {
+        slice[i] = rand.Intn(999) - rand.Intn(999)
+    }
+return slice
+}
+  
+func quicksort(a []int) []int {
+    if len(a) < 2 {
+        return a
+    }
+      
+    left, right := 0, len(a)-1
+      
+    pivot := rand.Int() % len(a)
+      
+    a[pivot], a[right] = a[right], a[pivot]
+      
+    for i, _ := range a {
+        if a[i] < a[right] {
+            a[left], a[i] = a[i], a[left]
+            left++
+        }
+    }
+      
+    a[left], a[right] = a[right], a[left]
+      
+    quicksort(a[:left])
+    quicksort(a[left+1:])
+      
+    return a
+}
+
+
+--- Unsorted --- 
+
+ [-86 -816 -205 86 -106 -624 357 189 -263 149 419 125 -277 -72 235 117 -361 -321 528 -170]
+
+--- Sorted ---
+
+ [-816 -624 -361 -321 -277 -263 -205 -170 -106 -86 -72 86 117 125 149 189 235 357 419 528]
+
+Program exited.
+
+
+
+2)
+
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func quickSort(arr []int, low, high int) {
+	if low < high {
+		var pivot = partition(arr, low, high)
+		quickSort(arr, low, pivot)
+		quickSort(arr, pivot + 1, high)
+	}
+}
+
+func partition(arr []int, low, high int) int {
+	var pivot = arr[low]
+	var i = low
+	var j = high
+
+	for i < j {
+		for arr[i] <= pivot && i < high {
+			i++;
+		}
+		for arr[j] > pivot && j > low {
+			j--
+		}
+
+		if i < j {
+			var temp = arr[i]
+			arr[i] = arr[j]
+			arr[j] = temp
+		}
+	}
+
+	arr[low] = arr[j]
+	arr[j] = pivot
+
+	return j
+}
+
+func printArray(arr []int) {
+	for i := 0; i < len(arr); i++ {
+		fmt.Print(strconv.Itoa(arr[i]) + " ")
+	}
+	fmt.Println("")
+}
+
+func main() {
+	var arr = []int { 15, 3, 12, 6, -9, 9, 0 }
+
+	fmt.Print("Before Sorting: ")
+	printArray(arr)
+
+	quickSort(arr, 0, len(arr) - 1)
+	fmt.Print("After Sorting: ")
+	printArray(arr)
+}
+
+Before Sorting: 15 3 12 6 -9 9 0 
+
+After Sorting: -9 0 3 6 9 12 15 
+
+3)
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+type Item int
+type Items []Item
+
+
+func qSort(a Items) {
+    const M = 12
+    var i, j, l, r int
+    var x Item
+    var low, high = make([]int, 0, M), make([]int, 0, M)
+
+    low, high = append(low, 0), append(high, len(a)-1)
+    for { // (*take top request from stack*)
+        l, low = low[len(low)-1], low[:len(low)-1]
+        r, high = high[len(high)-1], high[:len(high)-1]
+        for { // (*partition a[l] ... a[r]*)
+            i, j = l, r
+            x = a[l+(r-l)/2]
+            for {
+                for ; a[i] < x; i++ {
+                }
+                for ; x < a[j]; j-- {
+}
+                if i <= j {
+                    a[i], a[j] = a[j], a[i]
+                    i++
+                    j--
+                }
+                if i > j {
+                    break
+                }
+            }
+            if i < r { // (*stack request to sort right partition*)
+                low, high = append(low, i), append(high, r)
+            }
+            r = j // (*now l and r delimit the left partition*)
+            if l >= r {
+                break
+            }
+        }
+        if len(low)+len(high) == 0 {
+            break
+        }
+    }
+}
+
+func main() {
+    nItems := 4096
+    a := make(Items, nItems)
+    rand.Seed(time.Now().UnixNano())
+    for i := range a {
+        a[i] = Item(rand.Int31())
+    }
+    qSort(a)
+    for i := range a[1:] {
+        if a[i] > a[i+1] {
+            fmt.Println("(* sort error *)")
+        }
+    }
+}
+
+* sort error *
+
+
+4)
+
+package main
+
+import (
+    "fmt"
+    "math/rand"
+    "time"
+)
+
+func qsort_pass(arr []int, done chan int) []int{
+    if len(arr) < 2 {
+        done <- len(arr)
+        return arr
+    }
+    pivot := arr[0]
+    i, j := 1, len(arr)-1
+    for i != j {
+        for arr[i] < pivot && i!=j{
+            i++
+        }
+        for arr[j] >= pivot && i!=j{
+            j--
+        }
+        if arr[i] > arr[j] {
+            arr[i], arr[j] = arr[j], arr[i]
+        }
+    }
+    if arr[j] >= pivot {
+        j--
+    }
+    arr[0], arr[j] = arr[j], arr[0]
+    done <- 1;
+
+    go qsort_pass(arr[:j], done)
+    go qsort_pass(arr[j+1:], done)
+    return arr
+}
+
+func qsort(arr []int) []int {
+    done := make(chan int)
+    defer func() {
+        close(done)
+    }()
+
+    go qsort_pass(arr[:], done)
+
+    rslt := len(arr)
+    for rslt > 0 {
+        rslt -= <-done;
+    }
+    return arr
+}
+
+func main() {
+    fmt.Println("About to sort.")
+    rand.Seed(time.Now().UTC().UnixNano())
+    arr_rand := make([]int, 20)
+    for i := range arr_rand {
+        arr_rand[i] = rand.Intn(10)
+    }
+    fmt.Println(arr_rand)
+    qsort(arr_rand)
+    fmt.Println(arr_rand)
+}
+
+About to sort.
+[0 8 7 2 3 9 4 7 8 4 2 5 9 5 2 2 4 8 8 8]
+
+[0 2 2 2 2 3 4 4 4 5 5 7 7 8 8 8 8 8 9 9]
+
+
+Program exited.
+
+
+5)
+
+
+package main
+
+import (
+	"fmt"
+)
+
+func partition(a []int, lo, hi int) int {
+	p := a[hi]
+	for j := lo; j < hi; j++ {
+		if a[j] < p {
+			a[j], a[lo] = a[lo], a[j]
+			lo++
+		}
+	}
+
+	a[lo], a[hi] = a[hi], a[lo]
+	return lo
+}
+
+func quickSort(a []int, lo, hi int) {
+	if lo > hi {
+		return
+	}
+
+	p := partition(a, lo, hi)
+	quickSort(a, lo, p-1)
+	quickSort(a, p+1, hi)
+}
+
+func main() {
+	list := []int{55, 90, 74, 20, 16, 46, 43, 59, 2, 99, 79, 10, 73, 1, 68, 56, 3, 87, 40, 78, 14, 18, 51, 24, 57, 89, 4, 62, 53, 23, 93, 41, 95, 84, 88}
+	
+	quickSort(list, 0, len(list)-1)
+	fmt.Println(list)
+}
+
+[1 2 3 4 10 14 16 18 20 23 24 40 41 43 46 51 53 55 56 57 59 62 68 73 74 78 79 84 87 88 89 90 93 95 99]
+
+Program exited.
+
+Program exited.
