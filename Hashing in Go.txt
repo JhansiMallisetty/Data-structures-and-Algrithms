@@ -1,0 +1,249 @@
+1)
+
+
+package main
+
+
+import (
+	"crypto/sha1"
+	"fmt"
+)
+
+func main() {
+	s := "jhansi this string"
+
+	
+	h := sha1.New()
+
+	
+	h.Write([]byte(s))
+
+	
+	bs := h.Sum(nil)
+
+	
+	fmt.Println(s)
+	fmt.Printf("%x\n", bs)
+}
+
+
+jhansi this string
+fe13139826712bba1ff6f1a74f7bf87c6d9a41ce
+
+Program exited.
+
+
+2)
+
+package main
+
+import (
+	"crypto/sha256"
+	"fmt"
+)
+
+func main() {
+	h := sha256.New()
+	h.Write([]byte("hello kloudone\n"))
+	fmt.Printf("%x", h.Sum(nil))
+}
+
+cd82d3340fcb35e46f0f2ab7c73549230fed95169ca4f70b814c522499e09be9
+Program exited.
+
+
+3)
+
+package main
+
+import (
+	"crypto/sha256"
+	"fmt"
+	"io"
+	"log"
+	"os"
+)
+
+func main() {
+	f, err := os.Open("file.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%x", h.Sum(nil))
+}
+
+2020/11/23
+ 23:00:00 open file.txt: no such file or directory
+
+Program exited: status 1.
+
+4)
+
+package main
+
+import (
+	"crypto/sha256"
+	"fmt"
+)
+
+func main() {
+	sum := sha256.Sum256([]byte("kloudone\n"))
+	fmt.Printf("%x", sum)
+}
+
+88a7dcc5ef40480884e41c21e3f7688b58aad51f44a00690be141dd67e124b32
+Program exited.
+
+5)
+
+package main
+
+import (
+    "fmt"
+
+    "golang.org/x/crypto/bcrypt"
+)
+
+func HashPassword(password string) (string, error) {
+    bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+    return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+    return err == nil
+}
+
+func main() {
+    password := "secret"
+    hash, _ := HashPassword(password) 
+
+    fmt.Println("Password:", password)
+    fmt.Println("Hash:    ", hash)
+
+    match := CheckPasswordHash(password, hash)
+    fmt.Println("Match:   ", match)
+}
+
+Password: secret
+Hash:     $2a$14$6SgNKpHElNZYVWF6YSoBFu37IZHU/gSJaNKru09mfolWyzipoplcS
+Match:    true
+
+Program exited.
+
+6)
+
+package main
+ 
+import (
+	"crypto/md5"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
+	"fmt"
+)
+ 
+func main() {
+	fmt.Println("\n----------------Small Message----------------")
+	message := []byte("Today web engineering has modern apps adhere to what is known as a single-page app (SPA) model.")
+ 
+	fmt.Printf("Md5: %x\n\n", md5.Sum(message))
+	fmt.Printf("Sha1: %x\n\n", sha1.Sum(message))
+	fmt.Printf("Sha256: %x\n\n", sha256.Sum256(message))
+	fmt.Printf("Sha512: %x\n\n", sha512.Sum512(message))
+ 
+	fmt.Println("\n\n----------------Large Message----------------")
+	message = []byte("Today web engineering has modern apps adhere to what is known as a single-page app (SPA) model. This model gives you an experience in which you never navigate to particular pages or even reload a page.  It loads and unloads the various views of our app into the same page itself. If you've ever run popular web apps like Gmail, Facebook, Instagram, or Twitter, you've used a single-page app. In all those apps, the content gets dynamically displayed without requiring you to refresh or navigate to a different page. React gives you a powerful subjective model to work with and supports you to build user interfaces in a declarative and component-driven way.")
+ 
+	fmt.Printf("Md5: %x\n\n", md5.Sum(message))
+	fmt.Printf("Sha1: %x\n\n", sha1.Sum(message))
+	fmt.Printf("Sha256: %x\n\n", sha256.Sum256(message))
+	fmt.Printf("Sha512: %x\n\n", sha512.Sum512(message))
+}
+ 
+
+----------------Small Message----------------
+Md5: d53c7002ebeeaa872f02efdda82f76f0
+
+Sha1: b56fd6c3eabc1ea6e880ffb7762d31a4b39bbcc9
+
+Sha256: 0e81731d26a2ffd898be00c40bf0ab3c24ec82a0837311701193dd861efdb944
+
+Sha512: 97be88309470c98e8ff840a74567c3948263251f3ac6f232a6e228cebc6daa6d95569a966a5f2ba5d694dc644d02c144849e7a181a159b583a2060e2ce3ad375
+
+
+
+----------------Large Message----------------
+Md5: f52c27fb5fa09afbb717e5ded9ef5707
+
+Sha1: 86b1102f10518ef02089742862695e132ca6b5fe
+
+Sha256: 88c9eca72b7b635458945710d12f6709af44dd02c0a3bb9b16c7e352b6d13f84
+
+Sha512: 5400f78f1642d5b7df7a0c60e22e95ba04a94d16d33d008fc78a5002958f853ecc469bb8786632c0be47a0c5b44d5f78aa9878abe7f00b688d8712c921aa81b8
+
+
+Program exited.
+
+7)
+
+package main
+ 
+import (
+"fmt"
+)
+ 
+func main() {
+    var students map[int]string
+    students = make(map[int] string)
+    students[1]="jhansi"
+    students[2]="suji"
+    students[3]="navya"
+    students[4]="madhavi"
+    students[5]="ravi"
+    students[6]="cherry"
+    for i, j := range students {
+        fmt.Printf("Key: %d Value: %s\n", i, j)
+    }
+}
+
+Key: 4 Value: madhavi
+Key: 5 Value: ravi
+Key: 6 Value: cherry
+Key: 1 Value: jhansi
+Key: 2 Value: suji
+Key: 3 Value: navya
+
+Program exited.
+
+8)
+
+package main
+
+import (
+        "fmt"
+        "hash/fnv"
+)
+
+func hash(s string) uint32 {
+        h := fnv.New32a()
+        h.Write([]byte(s))
+        return h.Sum32()
+}
+
+func main() {
+        fmt.Println(hash("kloudone"))
+        fmt.Println(hash("kloudlearn"))
+}
+
+3373271230
+1365838072
+
+Program exited.
