@@ -1,0 +1,175 @@
+1)
+
+package main
+import "fmt"
+
+func main() {
+s := "kloud one"
+r := []rune(s)
+r[0] = 'K'
+r[6] = 'O'
+s2 := string(r)
+fmt.Println(s2)
+}
+
+
+Kloud One
+
+Program exited.
+
+2)
+
+package main
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
+
+func main() {
+	str1 := "this is a (sample) [(string)] with (SOME) special words"
+
+	re := regexp.MustCompile(`\[([^\[\]]*)\]`)
+	fmt.Printf("Pattern: %v\n", re.String())      
+	fmt.Println("Matched:", re.MatchString(str1)) 
+
+	fmt.Println("\nText between square brackets:")
+	submatchall := re.FindAllString(str1, -1)
+	for _, element := range submatchall {
+		element = strings.Trim(element, "[")
+		element = strings.Trim(element, "]")
+		fmt.Println(element)
+	}
+}
+
+
+Pattern: \[([^\[\]]*)\]
+Matched: true
+
+Text between square brackets:
+(string)
+
+Program exited.
+
+
+
+3)
+
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	str1 := "I @@@Love@@@@ #Kloud!$! ****One****Company^^^"
+
+	re := regexp.MustCompile(`[^a-zA-Z0-9]+`)
+
+	fmt.Printf("Pattern: %v\n", re.String()) 
+	fmt.Println(re.MatchString(str1))        
+
+	submatchall := re.FindAllString(str1, -1)
+	for _, element := range submatchall {
+		fmt.Println(element)
+	
+}
+}
+
+
+Pattern: [^a-zA-Z0-9]+
+true
+ @@@
+@@@@ #
+!$! ****
+****
+^^^
+
+Program exited.
+
+4)
+
+
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	str1 := "wecome to kloud one freshers on 27 oct 2020"
+
+	re := regexp.MustCompile(`\d{4}-\d{2}-\d{2}`)
+
+	fmt.Printf("Pattern: %v\n", re.String()) 
+
+	fmt.Println(re.MatchString(str1)) 
+
+	submatchall := re.FindAllString(str1, -1)
+	for _, element := range submatchall {
+		fmt.Println(element)
+	}
+}
+
+
+Pattern: \d{4}-\d{2}-\d{2}
+false
+
+Program exited.
+
+
+5)
+
+
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	str1 := `https://kloudone.com/aboutus.html`
+
+	re := regexp.MustCompile(`^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)`)
+	fmt.Printf("Pattern: %v\n", re.String()) 
+	fmt.Println(re.MatchString(str1)) 
+
+	submatchall := re.FindAllString(str1,-1)
+	for _, element := range submatchall {
+		fmt.Println(element)
+	}
+}
+
+
+Pattern: ^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)
+true
+https://kloudone.com
+
+Program exited.
+
+
+6)
+
+package main
+
+import (
+	"fmt"
+	"regexp"
+)
+
+func main() {
+	strEx := "Php-Golang-Php-Python-Php"
+	reStr := regexp.MustCompile("^(.*?)Php(.*)$")
+	repStr := "${1}Java$2"
+	output := reStr.ReplaceAllString(strEx, repStr)
+	fmt.Println(output)
+}
+
+
+Java-Golang-Php-Python-Php
+
+Program exited.
