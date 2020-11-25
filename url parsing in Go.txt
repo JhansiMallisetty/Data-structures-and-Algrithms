@@ -1,0 +1,279 @@
+1)
+
+
+package main
+
+import (
+	"fmt"
+	"net"
+	"net/url"
+)
+
+func main() {
+
+	
+	s := "postgres://user:jhansi@host.com:5432/path?k=v#f"
+
+	
+	u, err := url.Parse(s)
+	if err != nil {
+		panic(err)
+	}
+
+	
+	fmt.Println(u.Scheme)
+
+	
+	fmt.Println(u.User)
+	fmt.Println(u.User.Username())
+	p, _ := u.User.Password()
+	fmt.Println(p)
+
+	
+	fmt.Println(u.Host)
+	host, port, _ := net.SplitHostPort(u.Host)
+	fmt.Println(host)
+	fmt.Println(port)
+
+	
+	fmt.Println(u.Path)
+	fmt.Println(u.Fragment)
+
+	
+	fmt.Println(u.RawQuery)
+	m, _ := url.ParseQuery(u.RawQuery)
+	fmt.Println(m)
+	fmt.Println(m["k"][0])
+}
+
+
+postgres
+user:jhansi
+user
+jhansi
+host.com:5432
+host.com
+5432
+/path
+f
+k=v
+map[k:[v]]
+v
+
+
+2)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("https://www.linkedin.com/company/kloudone")
+	if err != nil {
+		log.Fatal(err)
+	}
+	u.Scheme = "https"
+	u.Host = "kloudone.com"
+	q := u.Query()
+	q.Set("q", "golang")
+	u.RawQuery = q.Encode()
+	fmt.Println(u)
+}
+
+https://kloudone.com/company/kloudone?q=golang
+
+3)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("http://example.com/x/y%2Fz")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Path:", u.Path)
+	fmt.Println("RawPath:", u.RawPath)
+	fmt.Println("EscapedPath:", u.EscapedPath())
+}
+
+Path: /x/y/z
+RawPath: /x/y%2Fz
+EscapedPath: /x/y%2Fz
+
+4)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("https://example.org:8000/path")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u.Hostname())
+	u, err = url.Parse("https://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:17000")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u.Hostname())
+}
+
+example.org
+2001:0db8:85a3:0000:0000:8a2e:0370:7334
+
+5)
+
+package main
+
+import (
+	"fmt"
+	"net/url"
+)
+
+func main() {
+	u := url.URL{Host: "example.com", Path: "foo"}
+	fmt.Println(u.IsAbs())
+	u.Scheme = "http"
+	fmt.Println(u.IsAbs())
+}
+
+
+false
+true
+
+6)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, _ := url.Parse("https:kloudone.com")
+	b, err := u.MarshalBinary()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%s\n", b)
+}
+
+https:kloudone.com
+
+7)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("https://kloudone.com")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u.Port())
+	u, err = url.Parse("https://kloudone.com:8080")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u.Port())
+}
+
+8080
+
+8)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("https://example.org/?a=1&a=2&b=&=3&&&&")
+	if err != nil {
+		log.Fatal(err)
+	}
+	q := u.Query()
+	fmt.Println(q["a"])
+	fmt.Println(q.Get("b"))
+	fmt.Println(q.Get(""))
+}
+
+[1 2]
+
+3
+
+9)
+
+package main
+
+import (
+	"fmt"
+	"net/url"
+)
+
+func main() {
+	u := &url.URL{
+		Scheme: "https",
+		User:   url.UserPassword("user", "password"),
+		Host:   "example.com",
+		Path:   "foo/bar",
+	}
+	fmt.Println(u.Redacted())
+	u.User = url.UserPassword("me", "newerPassword")
+	fmt.Println(u.Redacted())
+}
+
+
+https://user:xxxxx@example.com/foo/bar
+https://me:xxxxx@example.com/foo/bar
+
+
+10)
+
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/url"
+)
+
+func main() {
+	u, err := url.Parse("https:kloudone.com")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(u.RequestURI())
+}
+
+kloudone.com
+
+
+
+
+

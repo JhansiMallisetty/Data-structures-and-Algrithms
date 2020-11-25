@@ -1,0 +1,238 @@
+1)
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"os"
+)
+
+func main() {
+	var out bytes.Buffer
+	json.HTMLEscape(&out, []byte(`{"Name":"<b>HTML content</b>"}`))
+	out.WriteTo(os.Stdout)
+}
+
+{"Name":"\u003cb\u003eHTML content\u003c/b\u003e"}
+
+2)
+
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"log"
+	"os"
+)
+
+func main() {
+	type Road struct {
+		Name   string
+		Number int
+	}
+	roads := []Road{
+		{"jhansi", 23},
+		{"suji", 20},
+	}
+
+	b, err := json.Marshal(roads)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var out bytes.Buffer
+	json.Indent(&out, b, "=", "\t")
+	out.WriteTo(os.Stdout)
+}
+
+
+[
+=	{
+=		"Name": "jhansi",
+=		"Number": 23
+=	},
+=	{
+=		"Name": "suji",
+=		"Number": 20
+=	}
+=]
+
+3)
+
+package main
+
+import (
+    "encoding/json"
+    "fmt"
+)
+
+type Book struct {
+    Title  string `json:"title\n"`
+    Author Author `json:"author\n"`
+}
+
+type Author struct {
+    Sales     int  `json:"book_sales\n"`
+    Age       int  `json:"age\n"`
+    Developer bool `json:"is_developer\n"`
+}
+
+func main() {
+
+    author := Author{Sales: 3, Age: 25, Developer: true}
+    book := Book{Title: "Learning Concurrency in Python", Author: author}
+
+    byteArray, err := json.Marshal(book)
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    fmt.Println(string(byteArray))
+}
+
+{"Title":"Learning Concurrency in Python","Author":{"Sales":3,"Age":25,"Developer":true}}
+
+
+
+4)
+
+package main 
+   
+import ( 
+    "fmt"
+    "encoding/json"
+) 
+   
+
+type Human struct{ 
+       
+    
+    Name string 
+    Age int
+    Address string 
+} 
+   
+
+func main() { 
+       
+    
+    human1 := Human{"madhavi", 44, "Tirupati"} 
+       
+    
+    human_enc, err := json.Marshal(human1) 
+       
+    if err != nil { 
+           
+        
+        fmt.Println(err) 
+    } 
+       
+    
+    fmt.Println(string(human_enc)) 
+       
+    
+    human2 := []Human{ 
+        {Name: "jhansi", Age: 23, Address: "Banglore"}, 
+        {Name: "suji", Age: 20, Address: "Hyderbad"}, 
+        {Name: "navya", Age: 18, Address: "chennai"}, 
+    } 
+       
+   
+    human2_enc, err := json.Marshal(human2) 
+        
+        if err != nil { 
+       
+        
+            fmt.Println(err) 
+        } 
+           
+    
+    fmt.Println() 
+        fmt.Println(string(human2_enc)) 
+} 
+
+{"Name":"madhavi","Age":44,"Address":"Tirupati"}
+
+[{"Name":"jhansi","Age":23,"Address":"Banglore\n"},{"Name":"suji","Age":20,"Address":"Hyderbad\n"},{"Name":"navya","Age":18,"Address":"chennai\n"}]
+
+
+5)
+
+package main 
+   
+import ( 
+    "fmt"
+    "encoding/json"
+) 
+   
+
+type Human struct{ 
+       
+    
+    Name string 
+    Address string 
+    Age int
+} 
+   
+
+func main() { 
+       
+    
+    var human1 Human 
+       
+    
+    Data := []byte(`{ 
+        "Name": "jhansi",   
+        "Address": "Banglore", 
+        "Age": 23 
+    }`) 
+       
+    
+    err := json.Unmarshal(Data, &human1) 
+       
+    if err != nil { 
+           
+        
+            fmt.Println(err) 
+    } 
+       
+    
+    fmt.Println("Struct is:", human1) 
+    fmt.Printf("%s lives in %s.\n", human1.Name, human1.Address) 
+       
+    
+    var human2 []Human 
+       
+   
+    Data2 := []byte(` 
+    [ 
+        {"Name": "suji", "Address": "hyderabad", "Age": 20}, 
+        {"Name": "navya", "Address": "chennai", "Age": 18}, 
+        {"Name": "madhavi", "Address": "pune", "Age": 44} 
+    ]`) 
+       
+    
+    err2 := json.Unmarshal(Data2, &human2) 
+       
+        if err2 != nil { 
+       
+         
+            fmt.Println(err2) 
+        } 
+       
+    
+    for i := range human2{ 
+       
+        fmt.Println(human2[i]) 
+    } 
+} 
+
+
+Struct is: {jhansi Banglore 23}
+jhansi lives in Banglore.
+{suji hyderabad 20}
+{navya chennai 18}
+{madhavi pune 44}
+
+Program exited.

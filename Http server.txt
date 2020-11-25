@@ -1,0 +1,118 @@
+1)
+
+
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+
+func hello(w http.ResponseWriter, req *http.Request) {
+
+	
+	fmt.Fprintf(w, "hello\n")
+}
+
+func headers(w http.ResponseWriter, req *http.Request) {
+
+	
+	for name, headers := range req.Header {
+		for _, h := range headers {
+			fmt.Fprintf(w, "%v: %v\n", name, h)
+		}
+	}
+}
+
+func main() {
+
+	
+	http.HandleFunc("hello", hello)
+	http.HandleFunc("headers", headers)
+
+	
+	http.ListenAndServe(":8090", nil)
+}
+
+
+
+$ go run http-servers.go &
+
+$ curl localhost:8090/hello
+
+hello
+
+
+2)
+
+package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/Hello World", HelloServer)
+    http.ListenAndServe(":8080", nil)
+}
+
+func HelloServer(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, "Hello, %s!", r.URL.Path[1:])
+}
+
+
+localhost:8081/world
+
+Hello, World
+
+3)
+
+package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "Welcome to Kloud One")
+    })
+
+    fs := http.FileServer(http.Dir("static/"))
+    http.Handle("/static/", http.StripPrefix("/static/", fs))
+
+    http.ListenAndServe(":80", nil)
+}
+
+Welcome to Kloud One
+
+4)
+
+package main
+ 
+import (
+	"io"
+	"net/http"
+)
+ 
+func hello(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Hello jhansi")
+}
+ 
+func main() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", hello)
+	http.ListenAndServe(":8000", mux)
+}
+
+
+Hello jhansi
+
+
+
+
+
+
